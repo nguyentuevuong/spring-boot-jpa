@@ -1,1 +1,39 @@
-Spring boot say: Hello world!
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let token = '';
+            $("button#login").click(function () {
+                $.ajax({
+                    url: '/authenticate',
+                    method: 'POST',
+                    dataType: 'JSON',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ username: 'foo', password: 'foo' })
+                }).then(v => token = v.jwt);
+            });
+
+            $("button#data").click(function () {
+                $.ajax({
+                    url: '/hello',
+                    method: 'POST',
+                    dataType: 'JSON',
+                    contentType: 'application/json',
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                }).then(console.log);
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <button id="login">Login</button>
+    <button id="data">Get data</button>
+</body>
+
+</html>

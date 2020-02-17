@@ -1,25 +1,41 @@
 package com.nittsu.kinjirou.update.configs;
 
+import com.nittsu.kinjirou.update.filters.JwtRequestFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-
-// https://github.com/jonashackt/spring-boot-vuejs.git
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @Override
     @Autowired
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("password").roles("USER").and().withUser("admin")
-                .password("admin").roles("ADMIN");
+        auth.userDetailsService(userDetailsService);
+        // auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("USER").and().withUser("admin").password("{noop}admin").roles("ADMIN");
+    }
+
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Override
@@ -30,16 +46,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No session will be created or used by spring security
-        .and()
-            .httpBasic()
-        .and()
+            .csrf()
+                .disable()
             .authorizeRequests()
-                .antMatchers("/api/hello").permitAll()
-                .antMatchers("/api/user/**").permitAll() // allow every URI, that begins with '/api/user/'
-                .antMatchers("/api/secured").authenticated()
-                //.anyRequest().authenticated() // protect all other requests
-        .and()
-            .csrf().disable();
+                .antMatchers("/", "/authenticate")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+            .and()
+                .exceptionHandling()
+            .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

@@ -8,7 +8,7 @@
             let token = '';
             $("button#login").click(function () {
                 $.ajax({
-                    url: '/authenticate',
+                    url: '/api/authen/token',
                     method: 'POST',
                     dataType: 'JSON',
                     contentType: 'application/json',

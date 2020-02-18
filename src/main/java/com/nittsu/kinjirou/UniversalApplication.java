@@ -1,4 +1,4 @@
-package com.nittsu.kinjirou.update;
+package com.nittsu.kinjirou;
 
 import java.util.TimeZone;
 
@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
-@EntityScan(basePackageClasses = { UpdateApplication.class })
-public class UpdateApplication {
+@EntityScan(basePackageClasses = { UniversalApplication.class })
+public class UniversalApplication {
 
 	@PostConstruct
 	public void init() {
@@ -18,6 +18,6 @@ public class UpdateApplication {
 	}
 
 	public static void main(final String[] args) {
-		SpringApplication.run(UpdateApplication.class, args);
+		SpringApplication.run(UniversalApplication.class, args);
 	}
 }

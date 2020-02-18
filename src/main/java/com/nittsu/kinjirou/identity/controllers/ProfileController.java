@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping({ "/profile" })
-public class ProfileController {    
+public class ProfileController {
     @ResponseBody
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     public UserContext get(JwtAuthenticationToken token) {

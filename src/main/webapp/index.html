@@ -5,25 +5,43 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
-            let token = '';
+            let t = '';
             $("button#login").click(function () {
                 $.ajax({
                     url: '/api/auth/login',
                     method: 'POST',
                     dataType: 'JSON',
                     contentType: 'application/json',
-                    data: JSON.stringify({ username: '', password: '' })
-                }).then(v => token = v.jwt);
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }, data: JSON.stringify({
+                        "username": "svlada@gmail.com",
+                        "password": "test1234"
+                    })
+                }).then(v => t = v);
             });
 
-            $("button#data").click(function () {
+            $("button#refresh").click(function () {
                 $.ajax({
-                    url: '/api/hello',
-                    method: 'POST',
+                    url: '/api/auth/token',
+                    method: 'GET',
                     dataType: 'JSON',
                     contentType: 'application/json',
                     headers: {
-                        "Authorization": "Bearer " + token
+                        "Authorization": "Bearer " + t.refreshToken
+                    }
+                }).then(console.log);
+            });
+            
+
+            $("button#data").click(function () {
+                $.ajax({
+                    url: '/api/profile/me',
+                    method: 'GET',
+                    dataType: 'JSON',
+                    contentType: 'application/json',
+                    headers: {
+                        "Authorization": "Bearer " + t.token
                     }
                 }).then(console.log);
             });
@@ -33,6 +51,7 @@
 
 <body>
     <button id="login">Login</button>
+    <button id="refresh">Refresh token</button>
     <button id="data">Get data</button>
 </body>
 

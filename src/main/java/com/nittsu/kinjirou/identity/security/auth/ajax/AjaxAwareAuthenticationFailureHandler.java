@@ -20,12 +20,6 @@ import com.nittsu.kinjirou.identity.common.ErrorResponse;
 import com.nittsu.kinjirou.identity.security.exceptions.AuthMethodNotSupportedException;
 import com.nittsu.kinjirou.identity.security.exceptions.JwtExpiredTokenException;
 
-/**
- * 
- * @author vladimir.stankovic
- *
- *         Aug 3, 2016
- */
 @Component
 public class AjaxAwareAuthenticationFailureHandler implements AuthenticationFailureHandler {
 	private final ObjectMapper mapper;

@@ -3,9 +3,6 @@ package com.nittsu.kinjirou.identity.security.exceptions;
 
 import org.springframework.security.authentication.AuthenticationServiceException;
 
-/**
- * @author vladimir.stankovic
- */
 public class AuthMethodNotSupportedException extends AuthenticationServiceException {
     private static final long serialVersionUID = 3705043083010304496L;
 

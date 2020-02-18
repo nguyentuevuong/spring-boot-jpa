@@ -24,14 +24,11 @@ import org.springframework.util.Assert;
 
 @Component
 public class AjaxAuthenticationProvider implements AuthenticationProvider {
-    private final PasswordEncoder encoder;
-    private final DatabaseUserService userService;
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Autowired
-    public AjaxAuthenticationProvider(final DatabaseUserService userService, final PasswordEncoder encoder) {
-        this.userService = userService;
-        this.encoder = encoder;
-    }
+    private DatabaseUserService userService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

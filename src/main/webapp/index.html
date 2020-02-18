@@ -8,11 +8,11 @@
             let token = '';
             $("button#login").click(function () {
                 $.ajax({
-                    url: '/api/authen/token',
+                    url: '/api/auth/login',
                     method: 'POST',
                     dataType: 'JSON',
                     contentType: 'application/json',
-                    data: JSON.stringify({ username: 'foo', password: 'foo' })
+                    data: JSON.stringify({ username: '', password: '' })
                 }).then(v => token = v.jwt);
             });
 

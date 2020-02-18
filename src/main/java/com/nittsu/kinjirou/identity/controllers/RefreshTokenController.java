@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.nittsu.kinjirou.core.config.WebSecurityConfig;
 import com.nittsu.kinjirou.identity.entity.User;
 import com.nittsu.kinjirou.identity.security.UserService;
-import com.nittsu.kinjirou.identity.security.auth.ajax.LoginRequest;
 import com.nittsu.kinjirou.identity.security.auth.jwt.extrator.TokenExtractor;
 import com.nittsu.kinjirou.identity.security.auth.jwt.verifier.TokenVerifier;
 import com.nittsu.kinjirou.identity.security.configs.JwtSettings;

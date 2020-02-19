@@ -32,25 +32,13 @@ import com.nittsu.kinjirou.identity.security.auth.jwt.extrator.TokenExtractor;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
-    public static final String AUTHENTICATION_URL = "/api/auth/login";
-    public static final String REFRESH_TOKEN_URL = "/api/auth/token";
     public static final String API_ROOT_URL = "/api/**";
+    public static final String REFRESH_TOKEN_URL = "/api/auth/token";
+    public static final String AUTHENTICATION_URL = "/api/auth/login";
+    public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
 
     @Autowired
-    private RestAuthenticationEntryPoint authenticationEntryPoint;
-
-    @Autowired
-    private AuthenticationSuccessHandler successHandler;
-
-    @Autowired
-    private AuthenticationFailureHandler failureHandler;
-
-    @Autowired
-    private AjaxAuthenticationProvider ajaxAuthenticationProvider;
-
-    @Autowired
-    private JwtAuthenticationProvider jwtAuthenticationProvider;
+    private ObjectMapper objectMapper;
 
     @Autowired
     private TokenExtractor tokenExtractor;
@@ -59,7 +47,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private AuthenticationFailureHandler failureHandler;
+
+    @Autowired
+    private AuthenticationSuccessHandler successHandler;
+
+    @Autowired
+    private JwtAuthenticationProvider jwtAuthenticationProvider;
+
+    @Autowired
+    private AjaxAuthenticationProvider ajaxAuthenticationProvider;
+
+    @Autowired
+    private RestAuthenticationEntryPoint authenticationEntryPoint;
 
     protected AjaxLoginProcessingFilter buildAjaxLoginProcessingFilter(String loginEntryPoint) throws Exception {
         AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(loginEntryPoint, successHandler,
@@ -89,8 +89,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(ajaxAuthenticationProvider);
         auth.authenticationProvider(jwtAuthenticationProvider);
+        auth.authenticationProvider(ajaxAuthenticationProvider);
     }
 
     @Override

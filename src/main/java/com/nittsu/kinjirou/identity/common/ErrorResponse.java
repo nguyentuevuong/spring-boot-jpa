@@ -5,32 +5,31 @@ import java.util.Date;
 import org.springframework.http.HttpStatus;
 
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Error model for interacting with client.
  */
 @Getter
+@RequiredArgsConstructor
 public class ErrorResponse {
-    // HTTP Response Status Code
-    private final HttpStatus status;
+    // Time stamp
+    private final Date timestamp = new Date();
 
     // General Error message
+    @NonNull
     private final String message;
 
     // Error code
+    @NonNull
     private final ErrorCode errorCode;
 
-    // Time stamp
-    private final Date timestamp;
+    // HTTP Response Status Code
+    @NonNull
+    private final HttpStatus status;
 
-    protected ErrorResponse(final String message, final ErrorCode errorCode, HttpStatus status) {
-        this.message = message;
-        this.errorCode = errorCode;
-        this.status = status;
-        this.timestamp = new java.util.Date();
-    }
-
-    public static ErrorResponse of(final String message, final ErrorCode errorCode, HttpStatus status) {
+    public static ErrorResponse of(final String message, final ErrorCode errorCode, final HttpStatus status) {
         return new ErrorResponse(message, errorCode, status);
     }
 }

@@ -3,7 +3,10 @@
         "**/.classpath": true,
         "**/.project": true,
         "**/.settings": true,
-        "**/.factorypath": true
+        "**/.gradle": true,
+        "**/bin": true,
+        "**/build": true,
+        "**/target": true
     },
     "java.configuration.updateBuildConfiguration": "automatic"
 }

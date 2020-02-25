@@ -6,7 +6,8 @@
         "**/.gradle": true,
         "**/bin": true,
         "**/build": true,
-        "**/target": true
+        "**/target": true,
+        "**/.factorypath": true
     },
     "java.configuration.updateBuildConfiguration": "automatic"
 }

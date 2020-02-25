@@ -42,14 +42,16 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
         UserContext userContext = (UserContext) authentication.getPrincipal();
         
         JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
-        JwtToken refreshToken = tokenFactory.createRefreshToken(userContext);
+        JwtToken refreshToken = tokenFactory.createRefreshJwtToken(userContext);
         
         Map<String, String> tokenMap = new HashMap<String, String>();
+
         tokenMap.put("token", accessToken.getToken());
         tokenMap.put("refreshToken", refreshToken.getToken());
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        
         mapper.writeValue(response.getWriter(), tokenMap);
 
         clearAuthenticationAttributes(request);

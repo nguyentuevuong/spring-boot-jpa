@@ -36,8 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping({ "/auth" })
 public class RefreshTokenController {
-    @Autowired
-    private JwtTokenFactory tokenFactory;
 
     @Autowired
     private JwtSettings jwtSettings;
@@ -47,9 +45,11 @@ public class RefreshTokenController {
 
     @Autowired
     private TokenVerifier tokenVerifier;
+    
+    @Autowired
+    private JwtTokenFactory tokenFactory;
 
     @Autowired
-    @Qualifier("jwtHeaderTokenExtractor")
     private TokenExtractor tokenExtractor;
 
     @ResponseBody
@@ -80,7 +80,7 @@ public class RefreshTokenController {
                 .map(authority -> new SimpleGrantedAuthority(authority.getRole().authority()))
                 .collect(Collectors.toList());
 
-        UserContext userContext = UserContext.create(user.getUsername(), authorities);
+        UserContext userContext = UserContext.create(user.getUsername(), user.getDisplayName(), authorities);
 
         return tokenFactory.createAccessJwtToken(userContext);
     }

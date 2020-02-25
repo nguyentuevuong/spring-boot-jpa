@@ -29,6 +29,9 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private DatabaseUserService userService;
 
+    /**
+     * Method for /auth/login
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         Assert.notNull(authentication, "No authentication data provided");
@@ -51,7 +54,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
                 .map(authority -> new SimpleGrantedAuthority(authority.getRole().authority()))
                 .collect(Collectors.toList());
 
-        UserContext userContext = UserContext.create(user.getUsername(), authorities);
+        UserContext userContext = UserContext.create(user.getUsername(), user.getDisplayName(), authorities);
 
         return new UsernamePasswordAuthenticationToken(userContext, null, userContext.getAuthorities());
     }

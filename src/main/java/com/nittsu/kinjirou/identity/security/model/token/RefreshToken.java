@@ -9,12 +9,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import lombok.Getter;
 
 /**
  * RefreshToken
  */
-@SuppressWarnings("unchecked")
 public class RefreshToken implements JwtToken {
+    @Getter
     private Jws<Claims> claims;
 
     private RefreshToken(Jws<Claims> claims) {
@@ -35,7 +36,9 @@ public class RefreshToken implements JwtToken {
     public static Optional<RefreshToken> create(RawAccessJwtToken token, String signingKey) {
         Jws<Claims> claims = token.parseClaims(signingKey);
 
+        @SuppressWarnings("unchecked")
         List<String> scopes = claims.getBody().get("scopes", List.class);
+
         if (scopes == null || scopes.isEmpty() 
                 || !scopes.stream().filter(scope -> Scopes.REFRESH_TOKEN.authority().equals(scope)).findFirst().isPresent()) {
             return Optional.empty();
@@ -47,10 +50,6 @@ public class RefreshToken implements JwtToken {
     @Override
     public String getToken() {
         return null;
-    }
-
-    public Jws<Claims> getClaims() {
-        return claims;
     }
     
     public String getJti() {

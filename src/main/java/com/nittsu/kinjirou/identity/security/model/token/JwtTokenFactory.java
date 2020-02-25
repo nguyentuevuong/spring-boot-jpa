@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,16 +40,32 @@ public class JwtTokenFactory {
      * @return
      */
     public AccessJwtToken createAccessJwtToken(UserContext userContext) {
-        if (StringUtils.isBlank(userContext.getUsername())) 
+        if (StringUtils.isBlank(userContext.getUsername())) {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
+        }
 
-        if (userContext.getAuthorities() == null || userContext.getAuthorities().isEmpty()) 
+        if (userContext.getAuthorities() == null || userContext.getAuthorities().isEmpty()) {
             throw new IllegalArgumentException("User doesn't have any privileges");
-
-        Claims claims = Jwts.claims().setSubject(userContext.getUsername());
-        claims.put("scopes", userContext.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
+        }
 
         LocalDateTime currentTime = LocalDateTime.now();
+
+        Claims claims = Jwts.claims();
+        String subject = userContext.getUsername();
+        String displayName = userContext.getDisplayName();
+        List<String> authorities = userContext.getAuthorities().stream().map(s -> s.getAuthority()).collect(Collectors.toList());
+        
+        // username or identity
+        claims.setSubject(subject);
+
+        // authentication api
+        // claims.setAudience("/auth/login");
+
+        // add any attribute at here
+        claims.put("name", displayName);
+
+        // authorities
+        claims.put("scopes", authorities);
         
         String token = Jwts.builder()
           .setClaims(claims)
@@ -63,14 +80,23 @@ public class JwtTokenFactory {
         return new AccessJwtToken(token, claims);
     }
 
-    public JwtToken createRefreshToken(UserContext userContext) {
+    public JwtToken createRefreshJwtToken(UserContext userContext) {
         if (StringUtils.isBlank(userContext.getUsername())) {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
         }
 
         LocalDateTime currentTime = LocalDateTime.now();
 
-        Claims claims = Jwts.claims().setSubject(userContext.getUsername());
+        Claims claims = Jwts.claims();
+        String subject = userContext.getUsername();
+        String displayName = userContext.getDisplayName();
+        
+        // username or identity
+        claims.setSubject(subject);
+
+        // add any attribute at here
+        claims.put("name", displayName);
+
         claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.authority()));
         
         String token = Jwts.builder()

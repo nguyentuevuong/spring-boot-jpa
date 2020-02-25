@@ -26,10 +26,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "USERNAME", length = 35)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "DISPLAY_NAME", length = 35)
+    private String displayName;
+
+    @Column(name = "PASSWORD")
     private String password;
 
     @OneToMany

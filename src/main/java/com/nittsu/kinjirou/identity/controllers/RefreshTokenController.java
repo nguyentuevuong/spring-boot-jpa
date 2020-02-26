@@ -22,7 +22,6 @@ import com.nittsu.kinjirou.identity.security.model.token.RawAccessJwtToken;
 import com.nittsu.kinjirou.identity.security.model.token.RefreshToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.GrantedAuthority;

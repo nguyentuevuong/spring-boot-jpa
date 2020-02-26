@@ -12,11 +12,6 @@ import lombok.Setter;
 @ConfigurationProperties(prefix = "com.nittsu.kinjirou.jwt")
 public class JwtSettings {
     /**
-     * {@link JwtToken} will expire after this time.
-     */
-    private Integer tokenExpirationTime;
-
-    /**
      * Token issuer.
      */
     private String tokenIssuer;
@@ -25,6 +20,11 @@ public class JwtSettings {
      * Key is used to sign {@link JwtToken}.
      */
     private String tokenSigningKey;
+
+    /**
+     * {@link JwtToken} will expire after this time.
+     */
+    private Integer tokenExpirationTime;
 
     /**
      * {@link JwtToken} can be refreshed during this timeframe.

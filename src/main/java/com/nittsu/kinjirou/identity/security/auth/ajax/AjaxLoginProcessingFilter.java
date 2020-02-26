@@ -30,25 +30,27 @@ import com.nittsu.kinjirou.identity.security.exceptions.AuthMethodNotSupportedEx
 public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
     private static Logger logger = LoggerFactory.getLogger(AjaxLoginProcessingFilter.class);
 
+    private final ObjectMapper objectMapper;
+
     private final AuthenticationSuccessHandler successHandler;
     private final AuthenticationFailureHandler failureHandler;
 
-    private final ObjectMapper objectMapper;
-    
-    public AjaxLoginProcessingFilter(String defaultProcessUrl, AuthenticationSuccessHandler successHandler, 
-            AuthenticationFailureHandler failureHandler, ObjectMapper mapper) {
+    public AjaxLoginProcessingFilter(final String defaultProcessUrl, final AuthenticationSuccessHandler successHandler,
+            final AuthenticationFailureHandler failureHandler, final ObjectMapper mapper) {
         super(defaultProcessUrl);
+
+        this.objectMapper = mapper;
+        
         this.successHandler = successHandler;
         this.failureHandler = failureHandler;
-        this.objectMapper = mapper;
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+    public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException {
 
         if (!HttpMethod.POST.name().equals(request.getMethod()) || !WebUtil.isAjax(request)) {
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("Authentication method not supported. Request method: " + request.getMethod());
             }
 
@@ -56,25 +58,26 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
         }
 
         LoginRequest loginRequest = objectMapper.readValue(request.getReader(), LoginRequest.class);
-        
+
         if (StringUtils.isBlank(loginRequest.getUsername()) || StringUtils.isBlank(loginRequest.getPassword())) {
             throw new AuthenticationServiceException("Username or Password not provided");
         }
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+                loginRequest.getPassword());
 
         return this.getAuthenticationManager().authenticate(token);
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-            Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(final HttpServletRequest request, final HttpServletResponse response,
+            final FilterChain chain, final Authentication authResult) throws IOException, ServletException {
         successHandler.onAuthenticationSuccess(request, response, authResult);
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(final HttpServletRequest request, final HttpServletResponse response,
+            final AuthenticationException failed) throws IOException, ServletException {
         SecurityContextHolder.clearContext();
         failureHandler.onAuthenticationFailure(request, response, failed);
     }

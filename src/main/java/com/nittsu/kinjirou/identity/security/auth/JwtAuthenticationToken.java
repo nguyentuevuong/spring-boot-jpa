@@ -18,13 +18,14 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private UserContext userContext;
     private RawAccessJwtToken rawAccessToken;
 
-    public JwtAuthenticationToken(RawAccessJwtToken unsafeToken) {
+    public JwtAuthenticationToken(final RawAccessJwtToken unsafeToken) {
         super(null);
+
         this.rawAccessToken = unsafeToken;
         this.setAuthenticated(false);
     }
 
-    public JwtAuthenticationToken(UserContext userContext, Collection<? extends GrantedAuthority> authorities) {
+    public JwtAuthenticationToken(final UserContext userContext, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.eraseCredentials();
         this.userContext = userContext;

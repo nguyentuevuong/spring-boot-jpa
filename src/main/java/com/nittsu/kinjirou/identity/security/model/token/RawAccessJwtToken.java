@@ -16,9 +16,9 @@ import io.jsonwebtoken.UnsupportedJwtException;
 
 public class RawAccessJwtToken implements JwtToken {
     private static Logger logger = LoggerFactory.getLogger(RawAccessJwtToken.class);
-            
+
     private String token;
-    
+
     public RawAccessJwtToken(String token) {
         this.token = token;
     }

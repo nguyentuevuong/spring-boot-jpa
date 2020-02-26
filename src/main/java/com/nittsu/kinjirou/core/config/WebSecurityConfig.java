@@ -61,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private RestAuthenticationEntryPoint authenticationEntryPoint;
 
-    protected AjaxLoginProcessingFilter buildAjaxLoginProcessingFilter(String loginEntryPoint) throws Exception {
+    protected AjaxLoginProcessingFilter ajaxLoginProcessingFilter(String loginEntryPoint) throws Exception {
         AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(loginEntryPoint, successHandler,
                 failureHandler, objectMapper);
 
@@ -70,8 +70,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return filter;
     }
 
-    protected JwtTokenAuthenticationProcessingFilter buildJwtTokenAuthenticationProcessingFilter(
-            List<String> pathsToSkip, String pattern) throws Exception {
+    protected JwtTokenAuthenticationProcessingFilter jwtTokenAuthProcessingFilter(List<String> pathsToSkip,
+            String pattern) throws Exception {
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, pattern);
         JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(failureHandler,
                 tokenExtractor, matcher);
@@ -96,22 +96,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         List<String> permitAllEndpointList = Arrays.asList(AUTHENTICATION_URL, REFRESH_TOKEN_URL);
+        Class<UsernamePasswordAuthenticationFilter> simpleAuthFilter = UsernamePasswordAuthenticationFilter.class;
 
-        http.csrf().disable() // We don't need CSRF for JWT based authentication
-                .exceptionHandling()
-
-                .authenticationEntryPoint(this.authenticationEntryPoint)
-
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-                .and().authorizeRequests()
-                .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()])).permitAll().and()
-
-                .authorizeRequests().antMatchers(API_ROOT_URL).authenticated() // Protected API End-points
-                .and().addFilterBefore(new CustomCorsFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(buildAjaxLoginProcessingFilter(AUTHENTICATION_URL),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(buildJwtTokenAuthenticationProcessingFilter(permitAllEndpointList, API_ROOT_URL),
-                        UsernamePasswordAuthenticationFilter.class);
+        http // chain
+                .csrf() // disable csrf
+                .disable() // We don't need CSRF for JWT based authentication
+                .exceptionHandling() // eol
+                .authenticationEntryPoint(this.authenticationEntryPoint) // eol
+                .and() // eol
+                .sessionManagement() // eol
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // eol
+                .and() // eol
+                .authorizeRequests() // eol
+                .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()])) // eol
+                .permitAll() // eol
+                .and() // eol
+                .authorizeRequests() // eol
+                .antMatchers(API_ROOT_URL) // eol
+                .authenticated() // Protected API End-points
+                .and() // eol
+                .addFilterBefore(new CustomCorsFilter(), simpleAuthFilter) // eol
+                .addFilterBefore(ajaxLoginProcessingFilter(AUTHENTICATION_URL), simpleAuthFilter) // eol
+                .addFilterBefore(jwtTokenAuthProcessingFilter(permitAllEndpointList, API_ROOT_URL), simpleAuthFilter);
     }
 }

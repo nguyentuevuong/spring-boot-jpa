@@ -59,13 +59,16 @@ dependencies {
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
-	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+	implementation 'org.apache.commons:commons-lang3:3.9'
+
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
+	implementation 'org.apache.commons:commons-collections4:4.4'
 
 	// https://mvnrepository.com/artifact/org.jetbrains.pty4j/pty4j
-	compile group: 'org.jetbrains.pty4j', name: 'pty4j', version: '0.9.6'
+	implementation 'org.jetbrains.pty4j:pty4j:0.9.6'
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

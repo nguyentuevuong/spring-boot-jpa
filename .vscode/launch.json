@@ -6,12 +6,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch) - Current File",
-            "request": "launch",
-            "mainClass": "${file}"
-        },
-        {
-            "type": "java",
             "name": "Debug (Launch)-UniversalApplication<update>",
             "request": "launch",
             "mainClass": "com.nittsu.kinjirou.UniversalApplication",

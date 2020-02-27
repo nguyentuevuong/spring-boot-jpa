@@ -6,7 +6,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
-            let t = '';
+            let t = {
+                token: null,
+                refreshToken: null
+            };
+
             $("button#login").click(function () {
                 $.ajax({
                     url: '/api/auth/login',
@@ -23,6 +27,13 @@
                 }).then(v => t = v);
             });
 
+            $("button#logout").click(function () {
+                t = {
+                    token: null,
+                    refreshToken: null
+                };
+            });
+
             $("button#refresh").click(function () {
                 $.ajax({
                     url: '/api/auth/token',
@@ -35,7 +46,6 @@
                     }
                 }).then(console.log);
             });
-
 
             $("button#data").click(function () {
                 $.ajax({
@@ -55,6 +65,7 @@
 
 <body>
     <button id="login">Login</button>
+    <button id="logout">Logout</button>
     <button id="refresh">Refresh token</button>
     <button id="data">Get data</button>
 

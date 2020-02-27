@@ -105,7 +105,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(authenticationEntryPoint) // eol
                 .and() // eol
                 .sessionManagement() // eol
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // eol
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // eol
                 .and() // eol
                 .authorizeRequests() // eol
                 .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()])) // eol

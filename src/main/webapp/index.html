@@ -44,7 +44,7 @@
                         'X-Requested-With': 'XMLHttpRequest',
                         "Authorization": "Bearer " + t.refreshToken
                     }
-                }).then(console.log);
+                }).then(v => t.token = v.token);
             });
 
             $("button#data").click(function () {

@@ -12,6 +12,7 @@ import com.nittsu.kinjirou.identity.security.configs.JwtSettings;
 import com.nittsu.kinjirou.identity.security.model.Scopes;
 import com.nittsu.kinjirou.identity.security.model.UserContext;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,7 +45,7 @@ public class JwtTokenFactory {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
         }
 
-        if (userContext.getAuthorities() == null || userContext.getAuthorities().isEmpty()) {
+        if (CollectionUtils.isEmpty(userContext.getAuthorities())) {
             throw new IllegalArgumentException("User doesn't have any privileges");
         }
 

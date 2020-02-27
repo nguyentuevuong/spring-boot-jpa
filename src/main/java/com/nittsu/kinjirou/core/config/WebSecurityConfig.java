@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -31,6 +32,7 @@ import com.nittsu.kinjirou.identity.security.auth.jwt.extrator.TokenExtractor;
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String API_ROOT_URL = "/api/**";
     public static final String REFRESH_TOKEN_URL = "/api/auth/token";
@@ -99,24 +101,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         Class<UsernamePasswordAuthenticationFilter> simpleAuthFilter = UsernamePasswordAuthenticationFilter.class;
 
         http // chain
-                .csrf() // disable csrf
-                .disable() // We don't need CSRF for JWT based authentication
-                .exceptionHandling() // eol
-                .authenticationEntryPoint(authenticationEntryPoint) // eol
-                .and() // eol
-                .sessionManagement() // eol
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // eol
-                .and() // eol
-                .authorizeRequests() // eol
-                .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()])) // eol
-                .permitAll() // eol
-                .and() // eol
-                .authorizeRequests() // eol
-                .antMatchers(API_ROOT_URL) // eol
-                .authenticated() // Protected API End-points
-                .and() // eol
-                .addFilterBefore(new CustomCorsFilter(), simpleAuthFilter) // eol
-                .addFilterBefore(ajaxLoginProcessingFilter(AUTHENTICATION_URL), simpleAuthFilter) // eol
-                .addFilterBefore(jwtTokenAuthProcessingFilter(permitAllEndpointList, API_ROOT_URL), simpleAuthFilter);
+            .csrf() // disable csrf
+            .disable() // We don't need CSRF for JWT based authentication
+            // catch exception
+            .exceptionHandling() // eol
+            .authenticationEntryPoint(authenticationEntryPoint) // eol
+            .and() // eol
+            // set session policy
+            .sessionManagement() // eol
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // eol
+            .and() // eol
+            // permit authen & refresh url
+            .authorizeRequests() // eol
+            .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()])) // eol
+            .permitAll() // eol
+            .and() // eol
+            // protected all api
+            .authorizeRequests() // eol
+            .antMatchers(API_ROOT_URL) // eol
+            .authenticated() // Protected API End-points
+            .and() // eol
+            // accept cors
+            .addFilterBefore(new CustomCorsFilter(), simpleAuthFilter) // eol
+            // add ajax filter (without token)
+            .addFilterBefore(ajaxLoginProcessingFilter(AUTHENTICATION_URL), simpleAuthFilter) // eol
+            // add jwt filter (with token)
+            .addFilterBefore(jwtTokenAuthProcessingFilter(permitAllEndpointList, API_ROOT_URL), simpleAuthFilter);
     }
 }

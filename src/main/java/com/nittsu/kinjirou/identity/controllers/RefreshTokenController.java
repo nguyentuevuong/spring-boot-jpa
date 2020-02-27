@@ -45,7 +45,7 @@ public class RefreshTokenController {
 
     @Autowired
     private TokenVerifier tokenVerifier;
-    
+
     @Autowired
     private JwtTokenFactory tokenFactory;
 
@@ -77,7 +77,11 @@ public class RefreshTokenController {
         }
 
         List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getRole().authority()))
+                // authority -> string
+                .map(authority -> authority.getRole().authority())
+                // create new granted authority
+                .map(SimpleGrantedAuthority::new)
+                // to list
                 .collect(Collectors.toList());
 
         UserContext userContext = UserContext.create(user.getUsername(), user.getDisplayName(), authorities);

@@ -38,13 +38,17 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         Jws<Claims> jwsClaims = rawAccessToken.parseClaims(jwtSettings.getTokenSigningKey());
         String subject = jwsClaims.getBody().getSubject();
-        
+
         String name = jwsClaims.getBody().get("name", String.class);
 
         @SuppressWarnings("unchecked")
         List<String> scopes = jwsClaims.getBody().get("scopes", List.class);
-        
-        List<GrantedAuthority> authorities = scopes.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+        List<GrantedAuthority> authorities = scopes.stream()
+                // create new granted authority
+                .map(SimpleGrantedAuthority::new)
+                // to list
+                .collect(Collectors.toList());
 
         UserContext context = UserContext.create(subject, name, authorities);
 

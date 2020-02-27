@@ -40,7 +40,7 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
         super(defaultProcessUrl);
 
         this.objectMapper = mapper;
-        
+
         this.successHandler = successHandler;
         this.failureHandler = failureHandler;
     }

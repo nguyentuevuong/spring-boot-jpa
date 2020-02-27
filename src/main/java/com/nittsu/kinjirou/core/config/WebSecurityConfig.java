@@ -102,10 +102,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf() // disable csrf
                 .disable() // We don't need CSRF for JWT based authentication
                 .exceptionHandling() // eol
-                .authenticationEntryPoint(this.authenticationEntryPoint) // eol
+                .authenticationEntryPoint(authenticationEntryPoint) // eol
                 .and() // eol
                 .sessionManagement() // eol
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // eol
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // eol
                 .and() // eol
                 .authorizeRequests() // eol
                 .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()])) // eol

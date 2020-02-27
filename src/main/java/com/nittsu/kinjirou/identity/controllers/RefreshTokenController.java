@@ -21,6 +21,7 @@ import com.nittsu.kinjirou.identity.security.model.token.JwtTokenFactory;
 import com.nittsu.kinjirou.identity.security.model.token.RawAccessJwtToken;
 import com.nittsu.kinjirou.identity.security.model.token.RefreshToken;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -71,7 +72,7 @@ public class RefreshTokenController {
         User user = userService.getByUsername(subject)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
 
-        if (user.getRoles() == null) {
+        if (CollectionUtils.isEmpty(user.getRoles())) {
             throw new InsufficientAuthenticationException("User has no roles assigned");
         }
 

@@ -15,6 +15,8 @@ import org.springframework.security.core.GrantedAuthority;
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private static final long serialVersionUID = 2877954820905567501L;
 
+    private final String TOKEN_UNTRUSTED = "Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead";
+
     private UserContext userContext;
     private RawAccessJwtToken rawAccessToken;
 
@@ -27,17 +29,19 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     public JwtAuthenticationToken(final UserContext userContext, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
+        
         this.eraseCredentials();
         this.userContext = userContext;
+
         super.setAuthenticated(true);
     }
 
     @Override
     public void setAuthenticated(boolean authenticated) {
         if (authenticated) {
-            throw new IllegalArgumentException(
-                    "Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead");
+            throw new IllegalArgumentException(TOKEN_UNTRUSTED);
         }
+
         super.setAuthenticated(false);
     }
 

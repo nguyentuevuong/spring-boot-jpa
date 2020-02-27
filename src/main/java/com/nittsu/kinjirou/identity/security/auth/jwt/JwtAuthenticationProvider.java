@@ -24,10 +24,9 @@ import io.jsonwebtoken.Jws;
  * instance of {@link JwtToken} to perform authentication.
  */
 @Component
-@SuppressWarnings("unchecked")
 public class JwtAuthenticationProvider implements AuthenticationProvider {
     private final JwtSettings jwtSettings;
-    
+
     @Autowired
     public JwtAuthenticationProvider(JwtSettings jwtSettings) {
         this.jwtSettings = jwtSettings;
@@ -39,18 +38,19 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         Jws<Claims> jwsClaims = rawAccessToken.parseClaims(jwtSettings.getTokenSigningKey());
         String subject = jwsClaims.getBody().getSubject();
+
+        @SuppressWarnings("unchecked")
         List<String> scopes = jwsClaims.getBody().get("scopes", List.class);
-        List<GrantedAuthority> authorities = scopes.stream()
-            .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());
         
+        List<GrantedAuthority> authorities = scopes.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
         UserContext context = UserContext.create(subject, authorities);
-        
+
         return new JwtAuthenticationToken(context, context.getAuthorities());
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return (JwtAuthenticationToken.class.isAssignableFrom(authentication));
+        return JwtAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

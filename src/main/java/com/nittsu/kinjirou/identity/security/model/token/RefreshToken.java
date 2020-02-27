@@ -11,6 +11,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.Getter;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 /**
  * RefreshToken
  */
@@ -23,7 +25,7 @@ public class RefreshToken implements JwtToken {
     }
 
     /**
-     * Creates and validates Refresh token 
+     * Creates and validates Refresh token
      * 
      * @param token
      * @param signingKey
@@ -39,8 +41,8 @@ public class RefreshToken implements JwtToken {
         @SuppressWarnings("unchecked")
         List<String> scopes = claims.getBody().get("scopes", List.class);
 
-        if (scopes == null || scopes.isEmpty() 
-                || !scopes.stream().filter(scope -> Scopes.REFRESH_TOKEN.authority().equals(scope)).findFirst().isPresent()) {
+        if (CollectionUtils.isEmpty(scopes) || !scopes.stream()
+                .filter(scope -> Scopes.REFRESH_TOKEN.authority().equals(scope)).findFirst().isPresent()) {
             return Optional.empty();
         }
 
@@ -51,11 +53,11 @@ public class RefreshToken implements JwtToken {
     public String getToken() {
         return null;
     }
-    
+
     public String getJti() {
         return claims.getBody().getId();
     }
-    
+
     public String getSubject() {
         return claims.getBody().getSubject();
     }

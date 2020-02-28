@@ -9,17 +9,20 @@
             let t = {
                 token: null,
                 refreshToken: null
-            };
+            },
+                headers = {
+                    'X-Requested-With': 'XMLHttpRequest'
+                };
 
             $("button#login").click(function () {
+                delete headers.Authorization;
+
                 $.ajax({
                     url: '/api/auth/login',
                     method: 'POST',
                     dataType: 'JSON',
                     contentType: 'application/json',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
+                    headers,
                     data: JSON.stringify({
                         "username": "nguyentuevuong@gmail.com",
                         "password": "test1234"
@@ -32,31 +35,39 @@
                     token: null,
                     refreshToken: null
                 };
+
+                delete headers.Authorization;
             });
 
             $("button#refresh").click(function () {
+                if (t.refreshToken) {
+                    headers.Authorization = 'Bearer ' + t.refreshToken;
+                } else {
+                    delete headers.Authorization;
+                }
+
                 $.ajax({
                     url: '/api/auth/token',
                     method: 'GET',
                     dataType: 'JSON',
                     contentType: 'application/json',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        "Authorization": "Bearer " + t.refreshToken
-                    }
+                    headers,
                 }).then(v => t.token = v.token);
             });
 
             $("button#data").click(function () {
+                if (t.token) {
+                    headers.Authorization = 'Bearer ' + t.token;
+                } else {
+                    delete headers.Authorization;
+                }
+
                 $.ajax({
                     url: '/api/profile/me',
                     method: 'GET',
                     dataType: 'JSON',
                     contentType: 'application/json',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        "Authorization": "Bearer " + t.token
-                    }
+                    headers
                 }).then(console.log);
             });
         });
@@ -69,10 +80,10 @@
     <button id="refresh">Refresh token</button>
     <button id="data">Get data</button>
 
-    <div id="terminal"></div>
+    <!--<div id="terminal"></div>
 
     <script src="resources/js/xterm.min.js"></script>
-    <script src="resources/js/websocket.js"></script>
+    <script src="resources/js/websocket.js"></script>-->
 </body>
 
 </html>

@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -51,6 +54,9 @@ public class JwtTokenFactory {
 
         LocalDateTime currentTime = LocalDateTime.now();
 
+        Map<String, Object> header = new HashMap<>();
+        header.put(Header.TYPE, Header.JWT_TYPE);
+
         Claims claims = Jwts.claims();
         String subject = userContext.getUsername();
         String displayName = userContext.getDisplayName();
@@ -69,13 +75,15 @@ public class JwtTokenFactory {
         claims.put("scopes", authorities);
         
         String token = Jwts.builder()
-          .setClaims(claims)
-          .setIssuer(settings.getTokenIssuer())
-          .setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-          .setExpiration(Date.from(currentTime
-              .plusMinutes(settings.getTokenExpirationTime())
-              .atZone(ZoneId.systemDefault()).toInstant()))
-          .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
+            .setHeader(header)
+            .setClaims(claims)
+            .setId(UUID.randomUUID().toString())
+            .setIssuer(settings.getTokenIssuer())
+            .setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
+            .setExpiration(Date.from(currentTime
+                .plusMinutes(settings.getTokenExpirationTime())
+                .atZone(ZoneId.systemDefault()).toInstant()))
+            .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
         .compact();
 
         return new AccessJwtToken(token, claims);
@@ -88,10 +96,13 @@ public class JwtTokenFactory {
 
         LocalDateTime currentTime = LocalDateTime.now();
 
+        Map<String, Object> header = new HashMap<>();
+        header.put(Header.TYPE, Header.JWT_TYPE);
+
         Claims claims = Jwts.claims();
         String subject = userContext.getUsername();
         String displayName = userContext.getDisplayName();
-        
+
         // username or identity
         claims.setSubject(subject);
 
@@ -99,17 +110,17 @@ public class JwtTokenFactory {
         claims.put("name", displayName);
 
         claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.authority()));
-        
+
         String token = Jwts.builder()
-          .setClaims(claims)
-          .setIssuer(settings.getTokenIssuer())
-          .setId(UUID.randomUUID().toString())
-          .setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-          .setExpiration(Date.from(currentTime
-              .plusMinutes(settings.getRefreshTokenExpTime())
-              .atZone(ZoneId.systemDefault()).toInstant()))
-          .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
-        .compact();
+            .setHeader(header)
+            .setClaims(claims)
+            .setId(UUID.randomUUID().toString())
+            .setIssuer(settings.getTokenIssuer())
+            .setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
+            .setExpiration(Date.from(currentTime
+                .plusMinutes(settings.getRefreshTokenExpTime())
+                .atZone(ZoneId.systemDefault()).toInstant()))
+            .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey()).compact();
 
         return new AccessJwtToken(token, claims);
     }

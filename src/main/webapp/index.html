@@ -47,12 +47,12 @@
                 }
 
                 $.ajax({
-                    url: '/api/auth/token',
+                    url: '/api/auth/refresh-token',
                     method: 'GET',
                     dataType: 'JSON',
                     contentType: 'application/json',
                     headers,
-                }).then(v => t.token = v.token);
+                }).then(v => t = v);
             });
 
             $("button#data").click(function () {

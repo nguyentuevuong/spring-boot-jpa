@@ -30,7 +30,7 @@ public class UserRole {
         protected Long userId;
 
         @Enumerated(EnumType.STRING)
-        @Column(name = "ROLE")
+        @Column(name = "ROLE", length = 24, nullable = false)
         protected Role role;
     }
 

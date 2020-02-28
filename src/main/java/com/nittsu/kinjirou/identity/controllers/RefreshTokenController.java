@@ -1,7 +1,9 @@
 package com.nittsu.kinjirou.identity.controllers;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -24,6 +26,7 @@ import com.nittsu.kinjirou.identity.security.model.token.RefreshToken;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -53,8 +56,9 @@ public class RefreshTokenController {
     private TokenExtractor tokenExtractor;
 
     @ResponseBody
-    @RequestMapping(value = "/token", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-    public JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
+    @Secured({ "ROLE_REFRESH_TOKEN" })
+    @RequestMapping(value = "/refresh-token", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public Map<String, String> refreshToken(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String tokenPayload = tokenExtractor.extract(request.getHeader(WebSecurityConfig.AUTHENTICATION_HEADER_NAME));
 
@@ -85,7 +89,15 @@ public class RefreshTokenController {
                 .collect(Collectors.toList());
 
         UserContext userContext = UserContext.create(user.getUsername(), user.getDisplayName(), authorities);
+        
+        JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
+        JwtToken newRefreshToken = tokenFactory.createRefreshJwtToken(userContext);
 
-        return tokenFactory.createAccessJwtToken(userContext);
+        Map<String, String> tokenMap = new HashMap<String, String>();
+
+        tokenMap.put("token", accessToken.getToken());
+        tokenMap.put("refreshToken", newRefreshToken.getToken());
+
+        return tokenMap;
     }
 }

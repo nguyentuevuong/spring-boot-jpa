@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,10 +21,11 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackages = { "com.nittsu.kinjirou.update" })
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private CorsFilter jwtCorsFilter;
+    private CorsFilter customCorsFilter;
 
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
@@ -50,11 +52,36 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/", "/api/authen/token").permitAll().anyRequest()
-                .authenticated().and().exceptionHandling().and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.addFilterBefore(jwtCorsFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http
+                // .
+                .csrf()
+                // disable csrf
+                .disable()
+                // throw auth exception
+                .exceptionHandling()
+                // .
+                .and()
+                // chain session
+                .sessionManagement()
+                // enable stateless session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                // .
+                .and()
+                // chain authorize
+                .authorizeRequests()
+                // matchers
+                .antMatchers("/", "/api/authen/token")
+                // dont need auth
+                .permitAll()
+                // chain any request
+                .anyRequest()
+                // enable auth
+                .authenticated()
+                // register filters
+                .and()
+                // accept cors
+                .addFilterBefore(customCorsFilter, CorsFilter.class)
+                // register jwt filter
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

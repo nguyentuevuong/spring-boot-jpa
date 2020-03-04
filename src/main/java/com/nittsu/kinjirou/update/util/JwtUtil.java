@@ -13,8 +13,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtil {
-
-    private String SECRET_KEY = "secret";
+    private String SECRET_KEY = "xm8EV6Hy5RMFK4EEACIDAwQus";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -51,7 +50,7 @@ public class JwtUtil {
             .setSubject(subject)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-            .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+            .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
             .compact();
     }
 

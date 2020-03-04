@@ -8,9 +8,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Component
-public class JwtCorsFilter extends CorsFilter {
+public class CustomCorsFilter extends CorsFilter {
 
-    public JwtCorsFilter() {
+    public CustomCorsFilter() {
         super(configurationSource());
     }
 

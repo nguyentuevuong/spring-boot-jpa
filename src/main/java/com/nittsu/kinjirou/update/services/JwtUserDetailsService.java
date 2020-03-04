@@ -18,6 +18,6 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         // replace it by info get from db
-        return new User("foo", passwordEncoder.encode("foo"), new ArrayList<>());
+        return new User("nguyentuevuong@gmail.com", passwordEncoder.encode("test1234"), new ArrayList<>());
     }
 }

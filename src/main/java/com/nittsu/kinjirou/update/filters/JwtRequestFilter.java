@@ -20,23 +20,29 @@ import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+    private static final String HEADER_PREFIX = "Bearer ";
+    private static final String AUTHENTICATION_HEADER_NAME = "Authorization";
+
     @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private WebAuthenticationDetailsSource webAuthenticationDetailsSource;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        final String authorizationHeader = request.getHeader("Authorization");
+        final String authorizationHeader = request.getHeader(AUTHENTICATION_HEADER_NAME);
 
         String jwt = null;
         String username = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
+        if (authorizationHeader != null && authorizationHeader.startsWith(HEADER_PREFIX)) {
+            jwt = authorizationHeader.substring(HEADER_PREFIX.length());
             username = jwtUtil.extractUsername(jwt);
         }
 
@@ -48,8 +54,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                usernamePasswordAuthenticationToken.setDetails(webAuthenticationDetailsSource.buildDetails(request));
+
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }

@@ -1,4 +1,4 @@
-package com.nittsu.kinjirou.update.configs;
+package com.nittsu.kinjirou.core.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;

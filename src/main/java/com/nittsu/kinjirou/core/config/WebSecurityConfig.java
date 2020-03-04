@@ -125,7 +125,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authenticated() // Protected API End-points
             .and() // eol
             // accept cors
-            .addFilterBefore(customCorsFilter, simpleAuthFilter) // eol
+            .addFilterBefore(customCorsFilter, CorsFilter.class) // eol
             // add ajax filter (without token)
             .addFilterBefore(ajaxLoginProcessingFilter(AUTHENTICATION_URL), simpleAuthFilter) // eol
             // add jwt filter (with token)

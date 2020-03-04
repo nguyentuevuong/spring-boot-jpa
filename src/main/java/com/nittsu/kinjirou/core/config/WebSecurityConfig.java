@@ -16,10 +16,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nittsu.kinjirou.core.entrypoint.RestAuthenticationEntryPoint;
-import com.nittsu.kinjirou.core.filter.CustomCorsFilter;
 import com.nittsu.kinjirou.identity.security.auth.ajax.AjaxAuthenticationProvider;
 import com.nittsu.kinjirou.identity.security.auth.ajax.AjaxLoginProcessingFilter;
 import com.nittsu.kinjirou.identity.security.auth.jwt.JwtAuthenticationProvider;
@@ -41,6 +41,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private CorsFilter customCorsFilter;
 
     @Autowired
     private TokenExtractor tokenExtractor;
@@ -122,7 +125,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authenticated() // Protected API End-points
             .and() // eol
             // accept cors
-            .addFilterBefore(new CustomCorsFilter(), simpleAuthFilter) // eol
+            .addFilterBefore(customCorsFilter, simpleAuthFilter) // eol
             // add ajax filter (without token)
             .addFilterBefore(ajaxLoginProcessingFilter(AUTHENTICATION_URL), simpleAuthFilter) // eol
             // add jwt filter (with token)

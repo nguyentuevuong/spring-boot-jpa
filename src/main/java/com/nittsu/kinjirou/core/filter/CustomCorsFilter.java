@@ -2,10 +2,12 @@ package com.nittsu.kinjirou.core.filter;
 
 import java.util.Arrays;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+@Component
 public class CustomCorsFilter extends CorsFilter {
 
     public CustomCorsFilter() {

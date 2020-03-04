@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,6 +33,7 @@ import com.nittsu.kinjirou.identity.security.auth.jwt.extrator.TokenExtractor;
  */
 @Configuration
 @EnableWebSecurity
+@ComponentScan(basePackages = { "com.nittsu.kinjirou" })
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String API_ROOT_URL = "/api/**";
@@ -67,19 +69,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private RestAuthenticationEntryPoint authenticationEntryPoint;
 
     protected AjaxLoginProcessingFilter ajaxLoginProcessingFilter(String loginEntryPoint) throws Exception {
-        AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(loginEntryPoint, successHandler,
-                failureHandler, objectMapper);
+        AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(loginEntryPoint, successHandler, failureHandler, objectMapper);
 
         filter.setAuthenticationManager(this.authenticationManager);
 
         return filter;
     }
 
-    protected JwtTokenAuthenticationProcessingFilter jwtTokenAuthProcessingFilter(List<String> pathsToSkip,
-            String pattern) throws Exception {
+    protected JwtTokenAuthenticationProcessingFilter jwtTokenAuthProcessingFilter(List<String> pathsToSkip, String pattern) throws Exception {
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, pattern);
-        JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(failureHandler,
-                tokenExtractor, matcher);
+        JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
 
         filter.setAuthenticationManager(this.authenticationManager);
 

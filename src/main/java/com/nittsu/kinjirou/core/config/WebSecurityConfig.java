@@ -36,9 +36,9 @@ import com.nittsu.kinjirou.identity.security.auth.jwt.extrator.TokenExtractor;
 @ComponentScan(basePackages = { "com.nittsu.kinjirou" })
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    public static final String API_ROOT_URL = "/api/**";
-    public static final String REFRESH_TOKEN_URL = "/api/auth/token";
-    public static final String AUTHENTICATION_URL = "/api/auth/login";
+    private static final String API_ROOT_URL = "/api/**";
+    private static final String REFRESH_TOKEN_URL = "/api/auth/token";
+    private static final String AUTHENTICATION_URL = "/api/auth/login";
     public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
 
     @Autowired

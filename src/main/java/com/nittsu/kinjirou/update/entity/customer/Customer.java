@@ -16,4 +16,5 @@ public class Customer {
     private Long id;
 
     @Column(name = "NAME", length = 250, nullable = false)
+    private String name;
 }

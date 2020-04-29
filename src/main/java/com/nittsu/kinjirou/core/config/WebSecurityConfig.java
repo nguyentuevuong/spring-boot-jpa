@@ -69,16 +69,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private RestAuthenticationEntryPoint authenticationEntryPoint;
 
     protected AjaxLoginProcessingFilter ajaxLoginProcessingFilter(String loginEntryPoint) throws Exception {
-        AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(loginEntryPoint, successHandler, failureHandler, objectMapper);
+        AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(loginEntryPoint, successHandler,
+                failureHandler, objectMapper);
 
         filter.setAuthenticationManager(this.authenticationManager);
 
         return filter;
     }
 
-    protected JwtTokenAuthenticationProcessingFilter jwtTokenAuthProcessingFilter(List<String> pathsToSkip, String pattern) throws Exception {
+    protected JwtTokenAuthenticationProcessingFilter jwtTokenAuthProcessingFilter(List<String> pathsToSkip,
+            String pattern) throws Exception {
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, pattern);
-        JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
+
+        JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(matcher,
+                tokenExtractor, failureHandler);
 
         filter.setAuthenticationManager(this.authenticationManager);
 
@@ -103,31 +107,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         Class<UsernamePasswordAuthenticationFilter> simpleAuthFilter = UsernamePasswordAuthenticationFilter.class;
 
         http // chain
-            .csrf() // disable csrf
-            .disable() // We don't need CSRF for JWT based authentication
-            // catch exception
-            .exceptionHandling() // eol
-            .authenticationEntryPoint(authenticationEntryPoint) // eol
-            .and() // eol
-            // set session policy
-            .sessionManagement() // eol
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // eol
-            .and() // eol
-            // permit authen & refresh url
-            .authorizeRequests() // eol
-            .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()])) // eol
-            .permitAll() // eol
-            .and() // eol
-            // protected all api
-            .authorizeRequests() // eol
-            .antMatchers(API_ROOT_URL) // eol
-            .authenticated() // Protected API End-points
-            .and() // eol
-            // accept cors
-            .addFilterBefore(customCorsFilter, CorsFilter.class) // eol
-            // add ajax filter (without token)
-            .addFilterBefore(ajaxLoginProcessingFilter(AUTHENTICATION_URL), simpleAuthFilter) // eol
-            // add jwt filter (with token)
-            .addFilterBefore(jwtTokenAuthProcessingFilter(permitAllEndpointList, API_ROOT_URL), simpleAuthFilter);
+                .csrf() // disable csrf
+                .disable() // We don't need CSRF for JWT based authentication
+                // catch exception
+                .exceptionHandling() // eol
+                .authenticationEntryPoint(authenticationEntryPoint) // eol
+                .and() // eol
+                // set session policy
+                .sessionManagement() // eol
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // eol
+                .and() // eol
+                // permit authen & refresh url
+                .authorizeRequests() // eol
+                .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()])) // eol
+                .permitAll() // eol
+                .and() // eol
+                // protected all api
+                .authorizeRequests() // eol
+                .antMatchers(API_ROOT_URL) // eol
+                .authenticated() // Protected API End-points
+                .and() // eol
+                // accept cors
+                .addFilterBefore(customCorsFilter, CorsFilter.class) // eol
+                // add ajax filter (without token)
+                .addFilterBefore(ajaxLoginProcessingFilter(AUTHENTICATION_URL), simpleAuthFilter) // eol
+                // add jwt filter (with token)
+                .addFilterBefore(jwtTokenAuthProcessingFilter(permitAllEndpointList, API_ROOT_URL), simpleAuthFilter);
     }
 }

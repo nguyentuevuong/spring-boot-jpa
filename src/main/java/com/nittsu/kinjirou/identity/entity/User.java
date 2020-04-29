@@ -32,7 +32,7 @@ public class User {
     @Column(name = "DISPLAY_NAME", length = 35, nullable = false)
     private String displayName;
 
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", length = 255, nullable = false)
     private String password;
 
     @OneToMany

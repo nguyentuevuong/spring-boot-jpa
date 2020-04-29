@@ -1,7 +1,5 @@
 package com.nittsu.kinjirou.identity.security.auth.jwt.extrator;
 
-
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;

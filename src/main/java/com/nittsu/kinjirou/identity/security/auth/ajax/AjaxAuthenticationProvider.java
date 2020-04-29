@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.nittsu.kinjirou.identity.entity.User;
+import com.nittsu.kinjirou.identity.security.UserService;
 import com.nittsu.kinjirou.identity.security.model.UserContext;
-import com.nittsu.kinjirou.identity.user.service.DatabaseUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,7 +27,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
     private PasswordEncoder encoder;
 
     @Autowired
-    private DatabaseUserService userService;
+    private UserService userService;
 
     /**
      * Method for /auth/login
@@ -65,6 +65,6 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
+        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

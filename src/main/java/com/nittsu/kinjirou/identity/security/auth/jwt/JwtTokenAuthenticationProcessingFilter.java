@@ -12,7 +12,6 @@ import com.nittsu.kinjirou.identity.security.auth.JwtAuthenticationToken;
 import com.nittsu.kinjirou.identity.security.auth.jwt.extrator.TokenExtractor;
 import com.nittsu.kinjirou.identity.security.model.token.RawAccessJwtToken;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,20 +20,19 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-
 /**
  * Performs validation of provided JWT Token.
  */
 public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
-    private final AuthenticationFailureHandler failureHandler;
     private final TokenExtractor tokenExtractor;
-    
-    @Autowired
-    public JwtTokenAuthenticationProcessingFilter(AuthenticationFailureHandler failureHandler, 
-            TokenExtractor tokenExtractor, RequestMatcher matcher) {
+    private final AuthenticationFailureHandler failureHandler;
+
+    public JwtTokenAuthenticationProcessingFilter(final RequestMatcher matcher, final TokenExtractor tokenExtractor,
+            final AuthenticationFailureHandler failureHandler) {
         super(matcher);
-        this.failureHandler = failureHandler;
+        
         this.tokenExtractor = tokenExtractor;
+        this.failureHandler = failureHandler;
     }
 
     @Override
@@ -42,7 +40,7 @@ public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticati
             throws AuthenticationException, IOException, ServletException {
         String tokenPayload = request.getHeader(WebSecurityConfig.AUTHENTICATION_HEADER_NAME);
         RawAccessJwtToken token = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
-        
+
         return getAuthenticationManager().authenticate(new JwtAuthenticationToken(token));
     }
 
@@ -53,6 +51,7 @@ public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticati
 
         context.setAuthentication(authResult);
         SecurityContextHolder.setContext(context);
+
         chain.doFilter(request, response);
     }
 

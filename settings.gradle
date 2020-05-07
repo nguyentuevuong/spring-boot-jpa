@@ -6,11 +6,11 @@
  * Detailed information about configuring a multi-project build in Gradle can be found
  * in the user manual at https://docs.gradle.org/6.0.1/userguide/multi_project_builds.html
  */
- 
-include 'update.web'
-include 'update.core:webservice'
-include 'update.core:application'
-include 'update.core:domain'
-include 'update.core:infrastructure'
+
+// include 'update.core:architecture'
+// include 'update.core:webservice'
+// include 'update.core:application'
+// include 'update.core:domain'
+// include 'update.core:infrastructure'
 
 rootProject.name = 'update'

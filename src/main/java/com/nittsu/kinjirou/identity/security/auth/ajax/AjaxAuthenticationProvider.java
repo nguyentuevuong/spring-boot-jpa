@@ -40,14 +40,14 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         String password = (String) authentication.getCredentials();
 
         User user = userService.getByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("{user_not_found}: " + username));
 
         if (!encoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Authentication Failed. Password not valid.");
+            throw new BadCredentialsException("{authentication_failed}. {password_not_valid}");
         }
 
         if (user.getRoles() == null) {
-            throw new InsufficientAuthenticationException("User has no roles assigned");
+            throw new InsufficientAuthenticationException("user_has_no_roles_assigned");
         }
 
         List<GrantedAuthority> authorities = user.getRoles().stream()

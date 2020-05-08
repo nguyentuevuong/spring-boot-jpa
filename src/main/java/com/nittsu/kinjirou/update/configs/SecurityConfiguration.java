@@ -53,32 +53,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http
-                // .
-                .csrf()
                 // disable csrf
-                .disable()
-                // throw auth exception
-                .exceptionHandling()
-                // .
-                .and()
-                // chain session
-                .sessionManagement()
+                .csrf().disable()
                 // enable stateless session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                // .
-                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // chain authorize
-                .authorizeRequests()
-                // matchers
-                .antMatchers("/", "/api/authen/token")
-                // dont need auth
-                .permitAll()
-                // chain any request
-                .anyRequest()
-                // enable auth
-                .authenticated()
-                // register filters
-                .and()
+                .authorizeRequests().antMatchers("/", "/api/authen/token").permitAll().and()
                 // accept cors
                 .addFilterBefore(customCorsFilter, CorsFilter.class)
                 // register jwt filter

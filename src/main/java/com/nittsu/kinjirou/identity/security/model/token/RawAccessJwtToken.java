@@ -13,12 +13,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import lombok.Getter;
 
-public class RawAccessJwtToken implements JwtToken {
+public class RawAccessJwtToken {
     private static Logger logger = LoggerFactory.getLogger(RawAccessJwtToken.class);
 
-    @Getter
     private String token;
 
     public RawAccessJwtToken(String token) {

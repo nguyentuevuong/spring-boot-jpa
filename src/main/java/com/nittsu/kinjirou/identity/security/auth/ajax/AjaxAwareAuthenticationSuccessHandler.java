@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nittsu.kinjirou.identity.security.model.UserContext;
-import com.nittsu.kinjirou.identity.security.model.token.JwtToken;
 import com.nittsu.kinjirou.identity.security.model.token.JwtTokenFactory;
 
 /**
@@ -41,13 +40,13 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
             Authentication authentication) throws IOException, ServletException {
         UserContext userContext = (UserContext) authentication.getPrincipal();
         
-        JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
-        JwtToken refreshToken = tokenFactory.createRefreshJwtToken(userContext);
+        String accessToken = tokenFactory.createAccessJwtToken(userContext);
+        String refreshToken = tokenFactory.createRefreshJwtToken(userContext);
         
         Map<String, String> tokenMap = new HashMap<String, String>();
 
-        tokenMap.put("token", accessToken.getToken());
-        tokenMap.put("refreshToken", refreshToken.getToken());
+        tokenMap.put("token", accessToken);
+        tokenMap.put("refreshToken", refreshToken);
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

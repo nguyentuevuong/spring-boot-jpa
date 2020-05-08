@@ -39,7 +39,7 @@ public class JwtTokenFactory {
      * @param roles
      * @return
      */
-    public AccessJwtToken createAccessJwtToken(UserContext userContext) {
+    public String createAccessJwtToken(UserContext userContext) {
         if (StringUtils.isBlank(userContext.getUsername())) {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
         }
@@ -67,7 +67,7 @@ public class JwtTokenFactory {
         // authorities
         claims.put("scopes", authorities);
         
-        String token = Jwts.builder()
+        return Jwts.builder()
             .setHeader(header)
             .setClaims(claims)
             .setId(UUID.randomUUID().toString())
@@ -78,11 +78,9 @@ public class JwtTokenFactory {
                 .atZone(ZoneId.systemDefault()).toInstant()))
             .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
         .compact();
-
-        return new AccessJwtToken(token, claims);
     }
 
-    public JwtToken createRefreshJwtToken(UserContext userContext) {
+    public String createRefreshJwtToken(UserContext userContext) {
         if (StringUtils.isBlank(userContext.getUsername())) {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
         }
@@ -104,7 +102,7 @@ public class JwtTokenFactory {
 
         claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.authority()));
 
-        String token = Jwts.builder()
+        return Jwts.builder()
             .setHeader(header)
             .setClaims(claims)
             .setId(UUID.randomUUID().toString())
@@ -114,7 +112,5 @@ public class JwtTokenFactory {
                 .plusMinutes(settings.getRefreshTokenExpTime())
                 .atZone(ZoneId.systemDefault()).toInstant()))
             .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey()).compact();
-
-        return new AccessJwtToken(token, claims);
     }
 }

@@ -16,7 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 /**
  * RefreshToken
  */
-public class RefreshToken implements JwtToken {
+public class RefreshToken {
     @Getter
     private Jws<Claims> claims;
 
@@ -47,11 +47,6 @@ public class RefreshToken implements JwtToken {
         }
 
         return Optional.of(new RefreshToken(claims));
-    }
-
-    @Override
-    public String getToken() {
-        return null;
     }
 
     public String getJti() {

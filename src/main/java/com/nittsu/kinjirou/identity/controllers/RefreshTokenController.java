@@ -18,7 +18,6 @@ import com.nittsu.kinjirou.identity.security.auth.jwt.verifier.TokenVerifier;
 import com.nittsu.kinjirou.identity.security.configs.JwtSettings;
 import com.nittsu.kinjirou.identity.security.exceptions.InvalidJwtTokenException;
 import com.nittsu.kinjirou.identity.security.model.UserContext;
-import com.nittsu.kinjirou.identity.security.model.token.JwtToken;
 import com.nittsu.kinjirou.identity.security.model.token.JwtTokenFactory;
 import com.nittsu.kinjirou.identity.security.model.token.RawAccessJwtToken;
 import com.nittsu.kinjirou.identity.security.model.token.RefreshToken;
@@ -90,13 +89,13 @@ public class RefreshTokenController {
 
         UserContext userContext = UserContext.create(user.getUsername(), user.getDisplayName(), authorities);
         
-        JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
-        JwtToken newRefreshToken = tokenFactory.createRefreshJwtToken(userContext);
+        String accessToken = tokenFactory.createAccessJwtToken(userContext);
+        String newRefreshToken = tokenFactory.createRefreshJwtToken(userContext);
 
         Map<String, String> tokenMap = new HashMap<String, String>();
 
-        tokenMap.put("token", accessToken.getToken());
-        tokenMap.put("refreshToken", newRefreshToken.getToken());
+        tokenMap.put("token", accessToken);
+        tokenMap.put("refreshToken", newRefreshToken);
 
         return tokenMap;
     }

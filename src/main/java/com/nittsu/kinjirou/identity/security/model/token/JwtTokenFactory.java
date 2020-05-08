@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.nittsu.kinjirou.identity.entity.Role;
 import com.nittsu.kinjirou.identity.security.configs.JwtSettings;
-import com.nittsu.kinjirou.identity.security.model.Scopes;
-import com.nittsu.kinjirou.identity.security.model.UserContext;
+import com.nittsu.kinjirou.identity.security.model.UserAuthentication;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +39,7 @@ public class JwtTokenFactory {
      * @param roles
      * @return
      */
-    public String createAccessJwtToken(UserContext userContext) {
+    public String createAccessJwtToken(UserAuthentication userContext) {
         if (StringUtils.isBlank(userContext.getUsername())) {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
         }
@@ -80,7 +80,7 @@ public class JwtTokenFactory {
         .compact();
     }
 
-    public String createRefreshJwtToken(UserContext userContext) {
+    public String createRefreshJwtToken(UserAuthentication userContext) {
         if (StringUtils.isBlank(userContext.getUsername())) {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
         }
@@ -100,7 +100,7 @@ public class JwtTokenFactory {
         // add any attribute at here
         claims.put("name", displayName);
 
-        claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.authority()));
+        claims.put("scopes", Arrays.asList(Role.REFRESH_TOKEN.authority()));
 
         return Jwts.builder()
             .setHeader(header)

@@ -17,7 +17,7 @@ import com.nittsu.kinjirou.identity.security.auth.jwt.extrator.TokenExtractor;
 import com.nittsu.kinjirou.identity.security.auth.jwt.verifier.TokenVerifier;
 import com.nittsu.kinjirou.identity.security.configs.JwtSettings;
 import com.nittsu.kinjirou.identity.security.exceptions.InvalidJwtTokenException;
-import com.nittsu.kinjirou.identity.security.model.UserContext;
+import com.nittsu.kinjirou.identity.security.model.UserAuthentication;
 import com.nittsu.kinjirou.identity.security.model.token.JwtTokenFactory;
 import com.nittsu.kinjirou.identity.security.model.token.RawAccessJwtToken;
 import com.nittsu.kinjirou.identity.security.model.token.RefreshToken;
@@ -87,7 +87,7 @@ public class RefreshTokenController {
                 // to list
                 .collect(Collectors.toList());
 
-        UserContext userContext = UserContext.create(user.getUsername(), user.getDisplayName(), authorities);
+        UserAuthentication userContext = UserAuthentication.create(user.getUsername(), user.getDisplayName(), authorities);
         
         String accessToken = tokenFactory.createAccessJwtToken(userContext);
         String newRefreshToken = tokenFactory.createRefreshJwtToken(userContext);

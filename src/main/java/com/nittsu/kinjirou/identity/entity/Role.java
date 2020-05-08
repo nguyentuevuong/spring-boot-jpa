@@ -5,7 +5,9 @@ public enum Role {
 
     PREMIUM_MEMBER,
 
-    MEMBER;
+    MEMBER,
+    
+    REFRESH_TOKEN;
 
     public String authority() {
         return "ROLE_" + this.name();

@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nittsu.kinjirou.identity.security.model.UserContext;
+import com.nittsu.kinjirou.identity.security.model.UserAuthentication;
 import com.nittsu.kinjirou.identity.security.model.token.JwtTokenFactory;
 
 /**
@@ -38,7 +38,7 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        UserContext userContext = (UserContext) authentication.getPrincipal();
+        UserAuthentication userContext = (UserAuthentication) authentication.getPrincipal();
         
         String accessToken = tokenFactory.createAccessJwtToken(userContext);
         String refreshToken = tokenFactory.createRefreshJwtToken(userContext);

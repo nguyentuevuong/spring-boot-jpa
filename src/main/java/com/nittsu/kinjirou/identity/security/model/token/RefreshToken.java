@@ -3,7 +3,7 @@ package com.nittsu.kinjirou.identity.security.model.token;
 import java.util.List;
 import java.util.Optional;
 
-import com.nittsu.kinjirou.identity.security.model.Scopes;
+import com.nittsu.kinjirou.identity.entity.Role;
 
 import org.springframework.security.authentication.BadCredentialsException;
 
@@ -42,7 +42,7 @@ public class RefreshToken {
         List<String> scopes = claims.getBody().get("scopes", List.class);
 
         if (CollectionUtils.isEmpty(scopes) || !scopes.stream()
-                .filter(scope -> Scopes.REFRESH_TOKEN.authority().equals(scope)).findFirst().isPresent()) {
+                .filter(scope -> Role.REFRESH_TOKEN.authority().equals(scope)).findFirst().isPresent()) {
             return Optional.empty();
         }
 

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.nittsu.kinjirou.identity.entity.User;
 import com.nittsu.kinjirou.identity.security.UserService;
-import com.nittsu.kinjirou.identity.security.model.UserContext;
+import com.nittsu.kinjirou.identity.security.model.UserAuthentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -58,7 +58,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
                 // to list
                 .collect(Collectors.toList());
 
-        UserContext userContext = UserContext.create(user.getUsername(), user.getDisplayName(), authorities);
+        UserAuthentication userContext = UserAuthentication.create(user.getUsername(), user.getDisplayName(), authorities);
 
         return new UsernamePasswordAuthenticationToken(userContext, null, userContext.getAuthorities());
     }

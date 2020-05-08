@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.nittsu.kinjirou.identity.security.auth.JwtAuthenticationToken;
 import com.nittsu.kinjirou.identity.security.configs.JwtSettings;
-import com.nittsu.kinjirou.identity.security.model.UserContext;
+import com.nittsu.kinjirou.identity.security.model.UserAuthentication;
 import com.nittsu.kinjirou.identity.security.model.token.RawAccessJwtToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                 // to list
                 .collect(Collectors.toList());
 
-        UserContext context = UserContext.create(subject, name, authorities);
+        UserAuthentication context = UserAuthentication.create(subject, name, authorities);
 
         return new JwtAuthenticationToken(context, context.getAuthorities());
     }

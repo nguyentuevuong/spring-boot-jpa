@@ -2,7 +2,7 @@ package com.nittsu.kinjirou.identity.security.auth;
 
 import java.util.Collection;
 
-import com.nittsu.kinjirou.identity.security.model.UserContext;
+import com.nittsu.kinjirou.identity.security.model.UserAuthentication;
 import com.nittsu.kinjirou.identity.security.model.token.RawAccessJwtToken;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -17,7 +17,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     private final String TOKEN_UNTRUSTED = "Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead";
 
-    private UserContext userContext;
+    private UserAuthentication userContext;
     private RawAccessJwtToken rawAccessToken;
 
     public JwtAuthenticationToken(final RawAccessJwtToken unsafeToken) {
@@ -27,7 +27,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         this.setAuthenticated(false);
     }
 
-    public JwtAuthenticationToken(final UserContext userContext, Collection<? extends GrantedAuthority> authorities) {
+    public JwtAuthenticationToken(final UserAuthentication userContext, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         
         this.eraseCredentials();

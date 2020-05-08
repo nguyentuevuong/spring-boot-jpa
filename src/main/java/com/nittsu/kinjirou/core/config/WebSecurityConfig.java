@@ -108,10 +108,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 // set session policy
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                // authen all request
-                .authorizeRequests()
                 // permit authen & refresh url
-                .antMatchers(permitEndpointList.toArray(new String[0])).permitAll().and()
+                .authorizeRequests().antMatchers(permitEndpointList.toArray(new String[0])).permitAll().and()
+                // authen all request
+                .authorizeRequests().antMatchers(API_ROOT_URL).authenticated().and()
                 // accept cors
                 .addFilterBefore(customCorsFilter, CorsFilter.class)
                 // add ajax filter (without token)

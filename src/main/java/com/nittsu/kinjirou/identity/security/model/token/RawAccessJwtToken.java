@@ -42,7 +42,7 @@ public class RawAccessJwtToken implements JwtToken {
         } catch (ExpiredJwtException expiredEx) {
             logger.info("JWT Token is expired", expiredEx);
 
-            throw new JwtExpiredTokenException(this, "JWT Token expired", expiredEx);
+            throw new JwtExpiredTokenException("JWT Token expired", expiredEx);
         }
     }
 }

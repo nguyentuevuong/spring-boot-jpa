@@ -29,12 +29,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
  */
 @Component
 public class JwtTokenFactory {
-    private final JwtSettings settings;
-
     @Autowired
-    public JwtTokenFactory(JwtSettings settings) {
-        this.settings = settings;
-    }
+    private JwtSettings settings;
 
     /**
      * Factory method for issuing new JWT Tokens.

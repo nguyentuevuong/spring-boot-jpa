@@ -57,8 +57,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 // enable stateless session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                // chain authorize
-                .authorizeRequests().antMatchers("/", "/api/authen/token").permitAll().and()
+                // accept two request no need jwt
+                .authorizeRequests().antMatchers("/", "/api/authen/token").permitAll()
+                // any request need jwt
+                .anyRequest().authenticated().and()
                 // accept cors
                 .addFilterBefore(customCorsFilter, CorsFilter.class)
                 // register jwt filter

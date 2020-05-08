@@ -27,10 +27,6 @@ public class SkipPathRequestMatcher implements RequestMatcher {
 
     @Override
     public boolean matches(HttpServletRequest request) {
-        if (matchers.matches(request)) {
-            return false;
-        }
-        
-        return processingMatcher.matches(request) ? true : false;
+        return matchers.matches(request) ? false : processingMatcher.matches(request) ? true : false;
     }
 }

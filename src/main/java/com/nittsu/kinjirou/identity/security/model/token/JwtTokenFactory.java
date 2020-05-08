@@ -61,9 +61,6 @@ public class JwtTokenFactory {
         // username or identity
         claims.setSubject(subject);
 
-        // authentication api
-        // claims.setAudience("/auth/login");
-
         // add any attribute at here
         claims.put("name", displayName);
 

@@ -9,7 +9,7 @@ import lombok.Getter;
  * Model intended to be used for AJAX based authentication.
  */
 
- @Getter
+@Getter
 public class LoginRequest {
     private String username;
     private String password;

@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nittsu.kinjirou.core.entrypoint.RestAuthenticationEntryPoint;
 import com.nittsu.kinjirou.identity.security.auth.ajax.AjaxAuthenticationProvider;
 import com.nittsu.kinjirou.identity.security.auth.ajax.AjaxLoginProcessingFilter;
 import com.nittsu.kinjirou.identity.security.auth.jwt.JwtAuthenticationProvider;
@@ -65,26 +64,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AjaxAuthenticationProvider ajaxAuthenticationProvider;
 
-    @Autowired
-    private RestAuthenticationEntryPoint authenticationEntryPoint;
-
-    protected AjaxLoginProcessingFilter ajaxLoginProcessingFilter(String loginEntryPoint) throws Exception {
-        AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(loginEntryPoint, successHandler,
+    protected AjaxLoginProcessingFilter ajaxLoginProcessingFilter() throws Exception {
+        AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(AUTHENTICATION_URL, successHandler,
                 failureHandler, objectMapper);
 
-        filter.setAuthenticationManager(this.authenticationManager);
+        filter.setAuthenticationManager(authenticationManager);
 
         return filter;
     }
 
-    protected JwtTokenAuthenticationProcessingFilter jwtTokenAuthProcessingFilter(List<String> pathsToSkip,
-            String pattern) throws Exception {
-        SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, pattern);
+    protected JwtTokenAuthenticationProcessingFilter jwtAuthProcessingFilter(List<String> pathsToSkip)
+            throws Exception {
+        SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, API_ROOT_URL);
 
         JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(matcher,
                 tokenExtractor, failureHandler);
 
-        filter.setAuthenticationManager(this.authenticationManager);
+        filter.setAuthenticationManager(authenticationManager);
 
         return filter;
     }
@@ -103,35 +99,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        List<String> permitAllEndpointList = Arrays.asList(AUTHENTICATION_URL, REFRESH_TOKEN_URL);
+        List<String> permitEndpointList = Arrays.asList(AUTHENTICATION_URL, REFRESH_TOKEN_URL);
         Class<UsernamePasswordAuthenticationFilter> simpleAuthFilter = UsernamePasswordAuthenticationFilter.class;
 
-        http // chain
-                .csrf() // disable csrf
-                .disable() // We don't need CSRF for JWT based authentication
-                // catch exception
-                .exceptionHandling() // eol
-                .authenticationEntryPoint(authenticationEntryPoint) // eol
-                .and() // eol
+        http
+                // chain
+                // We don't need CSRF for JWT based authentication
+                .csrf().disable()
                 // set session policy
-                .sessionManagement() // eol
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // eol
-                .and() // eol
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                // authen all request
+                .authorizeRequests()
                 // permit authen & refresh url
-                .authorizeRequests() // eol
-                .antMatchers(permitAllEndpointList.toArray(new String[permitAllEndpointList.size()])) // eol
-                .permitAll() // eol
-                .and() // eol
-                // protected all api
-                .authorizeRequests() // eol
-                .antMatchers(API_ROOT_URL) // eol
-                .authenticated() // Protected API End-points
-                .and() // eol
+                .antMatchers(permitEndpointList.toArray(new String[0])).permitAll().and()
                 // accept cors
-                .addFilterBefore(customCorsFilter, CorsFilter.class) // eol
+                .addFilterBefore(customCorsFilter, CorsFilter.class)
                 // add ajax filter (without token)
-                .addFilterBefore(ajaxLoginProcessingFilter(AUTHENTICATION_URL), simpleAuthFilter) // eol
+                .addFilterBefore(ajaxLoginProcessingFilter(), simpleAuthFilter)
                 // add jwt filter (with token)
-                .addFilterBefore(jwtTokenAuthProcessingFilter(permitAllEndpointList, API_ROOT_URL), simpleAuthFilter);
+                .addFilterBefore(jwtAuthProcessingFilter(permitEndpointList), simpleAuthFilter);
     }
 }

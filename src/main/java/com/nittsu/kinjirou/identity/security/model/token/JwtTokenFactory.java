@@ -33,22 +33,40 @@ public class JwtTokenFactory {
     private JwtSettings settings;
 
     /**
-     * Factory method for issuing new JWT Tokens.
-     * 
-     * @param username
-     * @param roles
+     * Create access token
+     * @param userContext
      * @return
      */
     public String createAccessJwtToken(UserAuthentication userContext) {
+        return createJwtToken(userContext, true);
+    }
+
+    /**
+     * Create refresh token
+     * @param userContext
+     * @return
+     */
+    public String createRefreshJwtToken(UserAuthentication userContext) {
+        return createJwtToken(userContext, false);
+    }
+
+    /**
+     * Bussiness logic generate jwt
+     * @param userContext
+     * @param isAccess
+     * @return
+     */
+    private String createJwtToken(UserAuthentication userContext, boolean isAccess) {
         if (StringUtils.isBlank(userContext.getUsername())) {
-            throw new IllegalArgumentException("Cannot create JWT Token without username");
+            throw new IllegalArgumentException("cannot_create_jwt_token_without_username");
         }
 
-        if (CollectionUtils.isEmpty(userContext.getAuthorities())) {
-            throw new IllegalArgumentException("User doesn't have any privileges");
+        if (isAccess && CollectionUtils.isEmpty(userContext.getAuthorities())) {
+            throw new IllegalArgumentException("user_doesn_t_have_any_privileges");
         }
 
         LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime expirationTime = currentTime.plusMinutes(settings.getRefreshTokenExpTime());
 
         Map<String, Object> header = new HashMap<>();
         header.put(Header.TYPE, Header.JWT_TYPE);
@@ -56,7 +74,9 @@ public class JwtTokenFactory {
         Claims claims = Jwts.claims();
         String subject = userContext.getUsername();
         String displayName = userContext.getDisplayName();
-        List<String> authorities = userContext.getAuthorities().stream().map(s -> s.getAuthority()).collect(Collectors.toList());
+            
+        List<String> refreshAuthorities = Arrays.asList(Role.REFRESH_TOKEN.authority());
+        List<String> accessAuthorities = userContext.getAuthorities().stream().map(s -> s.getAuthority()).collect(Collectors.toList());
         
         // username or identity
         claims.setSubject(subject);
@@ -65,7 +85,7 @@ public class JwtTokenFactory {
         claims.put("name", displayName);
 
         // authorities
-        claims.put("scopes", authorities);
+        claims.put("scopes", isAccess ? accessAuthorities : refreshAuthorities);
         
         return Jwts.builder()
             .setHeader(header)
@@ -73,44 +93,8 @@ public class JwtTokenFactory {
             .setId(UUID.randomUUID().toString())
             .setIssuer(settings.getTokenIssuer())
             .setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-            .setExpiration(Date.from(currentTime
-                .plusMinutes(settings.getTokenExpirationTime())
-                .atZone(ZoneId.systemDefault()).toInstant()))
+            .setExpiration(Date.from(expirationTime.atZone(ZoneId.systemDefault()).toInstant()))
             .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
-        .compact();
-    }
-
-    public String createRefreshJwtToken(UserAuthentication userContext) {
-        if (StringUtils.isBlank(userContext.getUsername())) {
-            throw new IllegalArgumentException("Cannot create JWT Token without username");
-        }
-
-        LocalDateTime currentTime = LocalDateTime.now();
-
-        Map<String, Object> header = new HashMap<>();
-        header.put(Header.TYPE, Header.JWT_TYPE);
-
-        Claims claims = Jwts.claims();
-        String subject = userContext.getUsername();
-        String displayName = userContext.getDisplayName();
-
-        // username or identity
-        claims.setSubject(subject);
-
-        // add any attribute at here
-        claims.put("name", displayName);
-
-        claims.put("scopes", Arrays.asList(Role.REFRESH_TOKEN.authority()));
-
-        return Jwts.builder()
-            .setHeader(header)
-            .setClaims(claims)
-            .setId(UUID.randomUUID().toString())
-            .setIssuer(settings.getTokenIssuer())
-            .setIssuedAt(Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant()))
-            .setExpiration(Date.from(currentTime
-                .plusMinutes(settings.getRefreshTokenExpTime())
-                .atZone(ZoneId.systemDefault()).toInstant()))
-            .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey()).compact();
+            .compact();
     }
 }

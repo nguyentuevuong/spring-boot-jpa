@@ -73,8 +73,6 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
     protected void successfulAuthentication(final HttpServletRequest request, final HttpServletResponse response,
             final FilterChain chain, final Authentication authResult) throws IOException, ServletException {
         successHandler.onAuthenticationSuccess(request, response, authResult);
-
-        chain.doFilter(request, response);
     }
 
     @Override

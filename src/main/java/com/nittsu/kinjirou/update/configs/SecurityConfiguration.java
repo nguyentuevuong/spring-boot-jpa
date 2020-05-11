@@ -1,5 +1,6 @@
 package com.nittsu.kinjirou.update.configs;
 
+import com.nittsu.kinjirou.UniversalApplication;
 import com.nittsu.kinjirou.update.filters.JwtRequestFilter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackages = { "com.nittsu.kinjirou.update" })
+@ComponentScan(basePackageClasses = UniversalApplication.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 

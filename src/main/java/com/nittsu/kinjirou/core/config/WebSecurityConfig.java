@@ -50,9 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private TokenExtractor tokenExtractor;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private AuthenticationFailureHandler failureHandler;
 
     @Autowired
@@ -68,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(AUTHENTICATION_URL, successHandler,
                 failureHandler, objectMapper);
 
-        filter.setAuthenticationManager(authenticationManager);
+        filter.setAuthenticationManager(authenticationManagerBean());
 
         return filter;
     }
@@ -80,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(matcher,
                 tokenExtractor, failureHandler);
 
-        filter.setAuthenticationManager(authenticationManager);
+        filter.setAuthenticationManager(authenticationManagerBean());
 
         return filter;
     }
